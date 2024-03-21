@@ -13,6 +13,9 @@ export default function Nav() {
                 <li>
                     <Link href="/auth/">Login</Link>
                 </li>
+                <li>
+                    <Link href="/auth/signOut">Salir</Link>
+                </li>
             </ul>
         </nav>
     )

@@ -3,7 +3,6 @@
 import { IResponse } from "@/interfaces/response"
 import { jwtVerify } from "jose"
 import { cookies } from "next/headers"
-import { NextRequest, NextResponse } from "next/server"
 
 const secretKey = new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET)
 
@@ -26,9 +25,7 @@ export async function login(formData: FormData): Promise<IResponse> {
 
     const data = await response.json()
     if(response.ok) {
-        // const decodeToken = await decrypt(data.token)
         cookies().set('access_token', data.originalToken, { expires: new Date(Date.now() + 1000 * 60 * 60 * 24) , httpOnly: true, sameSite: 'lax', secure: false })
-
         return { ...data, success: true }
     }
 
@@ -44,22 +41,4 @@ export async function getSession() {
     if(!cookie) return null
 
     return cookie
-}
-
-export async function updateSession(request: NextRequest) {
-    const session = request?.cookies?.get('access_token')?.value
-    if(!session) return
-
-    console.log("Session: ", session)
-
-    const res = NextResponse.next()
-    res.cookies.set({
-        name: 'access_token',
-        value: session,
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: false,
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24)
-    })
-    return res
 }
