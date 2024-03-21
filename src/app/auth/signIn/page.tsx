@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { FormEvent, useState } from "react"
+import { login } from "../../../../lib"
 
 export default function SignInPage() {
     const router = useRouter()
@@ -11,21 +12,12 @@ export default function SignInPage() {
         event.preventDefault()
 
         const formData =  new FormData(event.currentTarget)
-        const email = formData.get('email') as string
-        const password = formData.get('password') as string
+        const response = await login(formData)
 
-        const response = await fetch('http://localhost:4000/api/auth/signIn', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password })
-        }).catch(error => console.log(error))
-
-        if(response.ok) {
+        if(response.success) {
             router.push('/dashboard')
         } else {
-            setError('Invalid credentials')
+            setError(response.message)
         }
     }
 
