@@ -1,15 +1,19 @@
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(req: NextRequest, res: NextResponse) {
+export function middleware(req: NextRequest) {
     const token = cookies().get('access_token')?.value
+    const url = req.nextUrl.clone()
 
     if(!token) {
-        redirect('/signIn')
+        url.pathname = '/auth'
+		return NextResponse.redirect(url)
     }
 }
 
 export const config = {
-    matcher: '/dashboard/:path*'
+    matcher: [
+        '/',
+        '/dashboard/:path*'
+    ],
 }
