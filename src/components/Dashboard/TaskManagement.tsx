@@ -1,21 +1,22 @@
-'use client'
+"use client";
 
-import { useEffect } from "react"
-import { userLogged } from "../../../lib"
-import CardDataStats from "@/components/CardDataStats"
+import React, { useEffect } from "react";
+import CardDataStats from "../CardDataStats";
+import { userLogged } from "../../../lib";
 
-export default function DashboardPage() {
-    useEffect(() => {
-        async function me() {
-            const user = await userLogged()
-            console.log(user)
-        }
+export function TaskManagement() {
+  useEffect(() => {
+    async function me() {
+      const user = await userLogged();
+      console.log(user);
+    }
 
-        me()
-    })
-    return (
-        <>
-<div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
+    me();
+  });
+
+  return (
+    <>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5">
         <CardDataStats title="Total views" total="$3.456K" rate="0.43%" levelUp>
           <svg
             className="fill-primary dark:fill-white"
@@ -36,6 +37,6 @@ export default function DashboardPage() {
           </svg>
         </CardDataStats>
       </div>
-        </>
-    )
+    </>
+  );
 }

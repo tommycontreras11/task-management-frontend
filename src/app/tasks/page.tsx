@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession } from "../../../../lib";
+import { getSession } from "../../../lib";
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState([]);

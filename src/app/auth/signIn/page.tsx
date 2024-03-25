@@ -1,7 +1,6 @@
 "use client";
 
 import { Alert, Box, Collapse } from "@mui/material";
-import { cookies } from "next/headers";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { setCookie } from "../../../../lib";
@@ -33,7 +32,7 @@ export default function SignInPage() {
     if (response.ok) {
       await setCookie(data.originalToken)
 
-      router.push("/dashboard");
+      router.push("/");
     } else {
       setError(data?.error?.message || data?.message);
     }
