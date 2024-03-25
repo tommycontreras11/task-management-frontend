@@ -1,9 +1,13 @@
-import Dashboard from "./dashboard/page";
+
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import DashboardPage from "./dashboard/page";
 
 export default function Home() {
   return (
     <>
-      <Dashboard />
+      <DefaultLayout>
+        <DashboardPage />
+      </DefaultLayout>
     </>
   )
 }
