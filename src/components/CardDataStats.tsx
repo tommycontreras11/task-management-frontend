@@ -1,76 +1,160 @@
-import React, { ReactNode } from "react";
+import React, { useEffect, useState } from "react";
+import {
+  Modal,
+  ModalContent,
+  Input,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Button,
+  Select,
+  SelectItem,
+} from "@nextui-org/react";
+import { useRouter } from "next/navigation";
+import { getAllWorkspace, userLogged } from "../../lib";
+import { IWorkspace } from "@/interfaces/workspace.interface";
 
 interface CardDataStatsProps {
   title: string;
-  total: string;
-  rate: string;
-  levelUp?: boolean;
-  levelDown?: boolean;
-  children: ReactNode;
+  create: boolean;
 }
 
-const CardDataStats: React.FC<CardDataStatsProps> = ({
-  title,
-  total,
-  rate,
-  levelUp,
-  levelDown,
-  children,
-}) => {
+const CardDataStats: React.FC<CardDataStatsProps> = ({ title, create }) => {
+  const router = useRouter();
+  const [workspaceSelected, setWorkspaceSelected] = useState<string>("");
+  const [workspaces, setWorkspaces] = useState<IWorkspace[]>([]);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  useEffect(() => {
+    async function meWorkspaces() {
+      const workspaces = await getAllWorkspace();
+      const user = await userLogged();
+  
+      const userLoggedWorkspaces = workspaces.filter(
+        (x) => x.user.uuid === user.uuid
+      );
+  
+      console.log(userLoggedWorkspaces)
+  
+      setWorkspaces(userLoggedWorkspaces);  
+    }
+    meWorkspaces();
+
+  }, [])
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    console.log("clicked");
+  };
+
+  const handleClickCreateBoard = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+
+    // const form = new FormData(event.currentTarget)
+    // const title = form.get("boardTitle")
+
+    console.log(title)
+
+    // const board = await fetch("http://localhost:4000/api/boards", {
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "body": JSON.stringify("")
+    //   },
+    //   method: "POST",
+    // })
+  };
+
+  const handleChangeWorkspace = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setWorkspaceSelected(event.target.value);
+  };
+
   return (
-    <div className="rounded-sm border border-stroke bg-white px-7.5 py-6 shadow-default dark:border-strokedark dark:bg-boxdark">
-      <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
-        {children}
-      </div>
+    // <div className="border-stroke bg-white px-7.5 py-6 shadow-default dark:border-strokedark dark:bg-boxdark">
+    //   { /*TODO: Align text to start when create mode is false*/ }
+    //   <div className={`flex p-3 ${create ? "items-center justify-center" : "items-center justify-center"}`}>
+    //     <div>
+    //       <span className="text-sm font-medium">{title}</span>
+    //     </div>
+    //   </div>
+    // </div>
 
-      <div className="mt-4 flex items-end justify-between">
-        <div>
-          <h4 className="text-title-md font-bold text-black dark:text-white">
-            {total}
-          </h4>
-          <span className="text-sm font-medium">{title}</span>
-        </div>
+    // <Card className="py-7 max-h-[140px] bg-slate-800 dark:text-black text-bodydark1 dark:bg-white hover:bg-meta-4 dark:hover:bg-slate-200 rounded-xl" onClick={() => {console.log("clicked")}}>
+    //   <CardHeader className="pb-0 pt-0 px-4 flex-col justify-center items-center ">
+    //     <h4 className="font-bold text-large text-center">{title}</h4>
+    //   </CardHeader>
+    // </Card>
 
-        <span
-          className={`flex items-center gap-1 text-sm font-medium ${
-            levelUp && "text-meta-3"
-          } ${levelDown && "text-meta-5"} `}
-        >
-          {rate}
+    <Button
+      className="py-10 max-h-[140px] bg-slate-800 dark:text-black text-bodydark1 dark:bg-white hover:bg-meta-4 dark:hover:bg-slate-200 rounded-xl"
+      onClick={create ? onOpen : handleClick}
+    >
+      <h4 className="font-bold text-large text-center">{title}</h4>
 
-          {levelUp && (
-            <svg
-              className="fill-meta-3"
-              width="10"
-              height="11"
-              viewBox="0 0 10 11"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M4.35716 2.47737L0.908974 5.82987L5.0443e-07 4.94612L5 0.0848689L10 4.94612L9.09103 5.82987L5.64284 2.47737L5.64284 10.0849L4.35716 10.0849L4.35716 2.47737Z"
-                fill=""
-              />
-            </svg>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Create board
+              </ModalHeader>
+              <ModalBody>
+                <Input
+                  autoFocus
+                  // endContent={
+                  //   <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                  // }
+                  label="Board title"
+                  variant="bordered"
+                  size="sm"
+                  id="boardTitle"
+                />
+                {/* <Input
+                  // endContent={
+                  //   <LockIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                  // }
+                  label="Workspace"
+                  placeholder="Enter your password"
+                  type="password"
+                  variant="bordered"
+                /> */}
+                <Select
+                  variant={"bordered"}
+                  placeholder="Workspace"
+                  size="md"
+                  id="workspaceId"
+                  value={workspaceSelected}
+                  onChange={handleChangeWorkspace}
+                >
+                                      {workspaces.map((workspace) => (
+                      
+                        <SelectItem key={workspace.uuid} value={workspace.name}>
+                          {workspace.name}
+                        </SelectItem>
+                      
+                    ))}
+
+                </Select>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="flat" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onClick={handleClickCreateBoard}>
+                  Create
+                </Button>
+              </ModalFooter>
+
+            </>
           )}
-          {levelDown && (
-            <svg
-              className="fill-meta-5"
-              width="10"
-              height="11"
-              viewBox="0 0 10 11"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M5.64284 7.69237L9.09102 4.33987L10 5.22362L5 10.0849L-8.98488e-07 5.22362L0.908973 4.33987L4.35716 7.69237L4.35716 0.0848701L5.64284 0.0848704L5.64284 7.69237Z"
-                fill=""
-              />
-            </svg>
-          )}
-        </span>
-      </div>
-    </div>
+        </ModalContent>
+      </Modal>
+    </Button>
   );
 };
 

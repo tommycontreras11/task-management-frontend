@@ -1,5 +1,6 @@
 "use server";
 
+import { IWorkspace } from "@/interfaces/workspace.interface";
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
@@ -33,6 +34,20 @@ export async function userLogged() {
 
     const data = await response.json();
     return data;
+}
+
+export async function getAllWorkspace(): Promise<IWorkspace[]> {
+    const response = await fetch("http://localhost:4000/api/workspaces", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": await getSession() as string,
+        }
+    })
+
+  const data = await response.json()
+
+  return data
 }
 
 export async function logOut() {

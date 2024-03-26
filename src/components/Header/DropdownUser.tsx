@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import DarkModeSwitcher from "./DarkModeSwitcher";
 import { DropdownDownIcon, MyProfileIcon, SettingsIcon, SignOutIcon } from "@/icons/icons";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 const DropdownUser = ({ userName }: { userName: string | undefined }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -75,7 +74,7 @@ const DropdownUser = ({ userName }: { userName: string | undefined }) => {
           dropdownOpen === true ? "block" : "hidden"
         }`}
       >
-        <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
+        <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-4 dark:border-strokedark">
           <li>
             <Link
               href="/profile"
@@ -94,7 +93,6 @@ const DropdownUser = ({ userName }: { userName: string | undefined }) => {
               Account Settings
             </Link>
           </li>
-          <DarkModeSwitcher />
         </ul>
 
         <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-4 dark:border-strokedark">
