@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { getSession } from "../../../lib";
+import CardTask from "@/components/Task/CardTask";
+import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState([]);
@@ -14,7 +16,7 @@ export default function TasksPage() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": cookie as string,
+          Authorization: cookie as string,
         },
       });
       const data = await response.json();
@@ -24,16 +26,8 @@ export default function TasksPage() {
   }, []);
 
   return (
-    <>
-      <h1>Tasks</h1>
-      <ul>
-        {tasks.map((task: any) => (
-          <div>
-            <li key={task.id}>{task.title}</li>
-            <p>{task.description}</p>
-          </div>
-        ))}
-      </ul>
-    </>
+    <DefaultLayout>
+      <CardTask />
+    </DefaultLayout>
   );
 }

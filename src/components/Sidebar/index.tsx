@@ -6,6 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import SidebarLinkGroup from "./SidebarLinkGroup";
 import { DropdownDownUpIcon, GoToBackIcon } from "@/icons/icons";
+import { IWorkspace } from "@/interfaces/workspace.interface";
+import { getAllWorkspace, userLogged } from "../../../lib";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -13,6 +15,8 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
+  const [workspaces, setWorkspaces] = useState<IWorkspace[]>([]);
+
   const pathname = usePathname();
 
   const trigger = useRef<any>(null);
@@ -59,6 +63,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     }
   }, [sidebarExpanded]);
 
+  useEffect(() => {
+    async function meWorkspaces() {
+      const workspaces = await getAllWorkspace();
+      const user = await userLogged();
+
+      const userLoggedWorkspaces = workspaces.filter(
+        (x) => x.user.uuid === user.uuid
+      );
+
+      setWorkspaces(userLoggedWorkspaces);
+    }
+    meWorkspaces();
+  }, []);
+
   return (
     <aside
       ref={sidebar}
@@ -95,10 +113,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         <nav className="mt-5 px-4 py-2 lg:mt-9 lg:px-6">
           {/* <!-- Menu Group --> */}
           <div>
-            <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
-              MENU
-            </h3>
-
             <ul className="mb-6 flex flex-col gap-1.5">
               {/* <!-- Menu Item Dashboard --> */}
               <li>
@@ -138,11 +152,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </Link>
               </li>
               {/* <!-- Menu Item Dashboard --> */}
+              <h3 className="mb-1 ml-4 mt-4 text-sm font-semibold text-bodydark2">
+                Workspaces
+              </h3>
 
               {/* <!-- Menu Item Forms --> */}
-              <SidebarLinkGroup
+              {workspaces.map((workspace) => (
+                <SidebarLinkGroup
                 activeCondition={
-                  pathname === "/forms" || pathname.includes("forms")
+                  pathname === `/${workspace.name}` || pathname.includes(`/${workspace.name}`)
                 }
               >
                 {(handleClick, open) => {
@@ -152,7 +170,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         href="#"
                         className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                           (pathname === "/forms" ||
-                            pathname.includes("forms")) &&
+                            pathname.includes(`/${workspace.name}`)) &&
                           "bg-graydark dark:bg-meta-4"
                         }`}
                         onClick={(e) => {
@@ -191,7 +209,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             fill="white"
                           />
                         </svg>
-                        Forms
+                        {workspace.name}
                         <DropdownDownUpIcon open={open} />
                       </Link>
                       {/* <!-- Dropdown Menu Start --> */}
@@ -203,26 +221,16 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                           <li>
                             <Link
-                              href="/forms/form-elements"
+                              href={`/workspaces/${workspace.uuid}/home`}
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/forms/form-elements" &&
+                                pathname === `/workspaces/${workspace.uuid}/home` &&
                                 "text-white"
                               }`}
                             >
-                              Form Elements
+                              Boards
                             </Link>
                           </li>
-                          <li>
-                            <Link
-                              href="/forms/form-layout"
-                              className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/forms/form-layout" &&
-                                "text-white"
-                              } `}
-                            >
-                              Form Layout
-                            </Link>
-                          </li>
+                          
                         </ul>
                       </div>
                       {/* <!-- Dropdown Menu End --> */}
@@ -230,6 +238,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   );
                 }}
               </SidebarLinkGroup>
+              ))}
               {/* <!-- Menu Item Forms --> */}
               
             </ul>

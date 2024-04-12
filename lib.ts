@@ -1,6 +1,7 @@
 "use server";
 
-import { IWorkspace } from "@/interfaces/workspace.interface";
+import { IBoard } from "@/interfaces/board.interface";
+import { IUser, IWorkspace } from "@/interfaces/workspace.interface";
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
@@ -23,27 +24,41 @@ export async function setCookie(token: string) {
   });
 }
 
-export async function userLogged() {
-    const response = await fetch("http://localhost:4000/api/me", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": await getSession() as string,
-        }
-    })
+export async function userLogged(): Promise<IUser> {
+  const response = await fetch("http://localhost:4000/api/me", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: (await getSession()) as string,
+    },
+  });
 
-    const data = await response.json();
-    return data;
+  const data = await response.json();
+  return data;
 }
 
 export async function getAllWorkspace(): Promise<IWorkspace[]> {
-    const response = await fetch("http://localhost:4000/api/workspaces", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": await getSession() as string,
-        }
-    })
+  const response = await fetch("http://localhost:4000/api/workspaces", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: (await getSession()) as string,
+    },
+  });
+
+  const data = await response.json();
+
+  return data;
+}
+
+export async function getOneWorkspace(uuid: string): Promise<IWorkspace> {
+  const response = await fetch(`http://localhost:4000/api/workspaces/${uuid}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: (await getSession()) as string,
+    },
+  });  
 
   const data = await response.json()
 

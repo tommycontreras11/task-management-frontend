@@ -1,8 +1,12 @@
+import { IBoard } from "./board.interface";
+
 export interface IWorkspace {
     uuid: string;
     name: string;
     description: string;
+    type: string;
     user: Partial<IUser>;
+    boards?: Partial<IBoard[]>
 }
 
 export interface IUser {

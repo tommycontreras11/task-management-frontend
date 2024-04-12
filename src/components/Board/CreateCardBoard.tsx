@@ -12,15 +12,10 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { getAllWorkspace, userLogged } from "../../lib";
+import { getAllWorkspace, userLogged } from "../../../lib";
 import { IWorkspace } from "@/interfaces/workspace.interface";
 
-interface CardDataStatsProps {
-  title: string;
-  create: boolean;
-}
-
-const CardDataStats: React.FC<CardDataStatsProps> = ({ title, create }) => {
+const CreateCardBoard = () => {
   const router = useRouter();
   const [workspaceSelected, setWorkspaceSelected] = useState<string>("");
   const [workspaces, setWorkspaces] = useState<IWorkspace[]>([]);
@@ -30,18 +25,15 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({ title, create }) => {
     async function meWorkspaces() {
       const workspaces = await getAllWorkspace();
       const user = await userLogged();
-  
+
       const userLoggedWorkspaces = workspaces.filter(
         (x) => x.user.uuid === user.uuid
       );
-  
-      console.log(userLoggedWorkspaces)
-  
-      setWorkspaces(userLoggedWorkspaces);  
+
+      setWorkspaces(userLoggedWorkspaces);
     }
     meWorkspaces();
-
-  }, [])
+  }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -57,8 +49,7 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({ title, create }) => {
     // const form = new FormData(event.currentTarget)
     // const title = form.get("boardTitle")
 
-    console.log(title)
-
+    
     // const board = await fetch("http://localhost:4000/api/boards", {
     //   headers: {
     //     "Content-Type": "application/json",
@@ -75,26 +66,11 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({ title, create }) => {
   };
 
   return (
-    // <div className="border-stroke bg-white px-7.5 py-6 shadow-default dark:border-strokedark dark:bg-boxdark">
-    //   { /*TODO: Align text to start when create mode is false*/ }
-    //   <div className={`flex p-3 ${create ? "items-center justify-center" : "items-center justify-center"}`}>
-    //     <div>
-    //       <span className="text-sm font-medium">{title}</span>
-    //     </div>
-    //   </div>
-    // </div>
-
-    // <Card className="py-7 max-h-[140px] bg-slate-800 dark:text-black text-bodydark1 dark:bg-white hover:bg-meta-4 dark:hover:bg-slate-200 rounded-xl" onClick={() => {console.log("clicked")}}>
-    //   <CardHeader className="pb-0 pt-0 px-4 flex-col justify-center items-center ">
-    //     <h4 className="font-bold text-large text-center">{title}</h4>
-    //   </CardHeader>
-    // </Card>
-
     <Button
       className="py-10 max-h-[140px] bg-slate-800 dark:text-black text-bodydark1 dark:bg-white hover:bg-meta-4 dark:hover:bg-slate-200 rounded-xl"
-      onClick={create ? onOpen : handleClick}
+      onClick={onOpen}
     >
-      <h4 className="font-bold text-large text-center">{title}</h4>
+      <h4 className="font-bold text-large text-center">Create new board</h4>
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
         <ModalContent>
@@ -131,14 +107,11 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({ title, create }) => {
                   value={workspaceSelected}
                   onChange={handleChangeWorkspace}
                 >
-                                      {workspaces.map((workspace) => (
-                      
-                        <SelectItem key={workspace.uuid} value={workspace.name}>
-                          {workspace.name}
-                        </SelectItem>
-                      
-                    ))}
-
+                  {workspaces.map((workspace) => (
+                    <SelectItem key={workspace.uuid} value={workspace.name}>
+                      {workspace.name}
+                    </SelectItem>
+                  ))}
                 </Select>
               </ModalBody>
               <ModalFooter>
@@ -149,7 +122,6 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({ title, create }) => {
                   Create
                 </Button>
               </ModalFooter>
-
             </>
           )}
         </ModalContent>
@@ -158,4 +130,4 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({ title, create }) => {
   );
 };
 
-export default CardDataStats;
+export default CreateCardBoard;
