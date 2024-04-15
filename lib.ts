@@ -1,6 +1,8 @@
 "use server";
 
+import { ICreateBoard } from "@/app/boards/interfaces/board.interface";
 import { IBoard } from "@/interfaces/board.interface";
+import { IResponse } from "@/interfaces/reponse.interface";
 import { IUser, IWorkspace } from "@/interfaces/workspace.interface";
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
@@ -63,6 +65,28 @@ export async function getOneWorkspace(uuid: string): Promise<IWorkspace> {
   const data = await response.json()
 
   return data
+}
+
+export async function createBoard({ title, workspaceUUID, userUUIDs }: ICreateBoard): Promise<IResponse> {
+  const board = await fetch("http://localhost:4000/api/boards", {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: (await getSession()) as string
+    },
+    body: JSON.stringify({
+      workspaceUUID,
+      title,
+      userUUIDs
+    }),
+    method: "POST",
+  })
+
+  const data = await board.json()
+
+  return {
+    message: data.message || data.error.message,
+    error: data.error ? true : false
+  }
 }
 
 export async function logOut() {

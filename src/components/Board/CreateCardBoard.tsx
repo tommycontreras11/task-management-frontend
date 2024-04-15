@@ -12,14 +12,19 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { getAllWorkspace, userLogged } from "../../../lib";
+import { createBoard, getAllWorkspace, userLogged } from "../../../lib";
 import { IWorkspace } from "@/interfaces/workspace.interface";
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import { Collapse, Alert, IconButton, Box } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 
 const CreateCardBoard = () => {
   const router = useRouter();
   const [workspaceSelected, setWorkspaceSelected] = useState<string>("");
   const [workspaces, setWorkspaces] = useState<IWorkspace[]>([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [open, setOpen] = useState(true);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     async function meWorkspaces() {
@@ -35,28 +40,26 @@ const CreateCardBoard = () => {
     meWorkspaces();
   }, []);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
-    console.log("clicked");
-  };
-
-  const handleClickCreateBoard = async (
-    event: React.MouseEvent<HTMLButtonElement>
+  const handleClick = async (
+    event: React.MouseEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
 
-    // const form = new FormData(event.currentTarget)
-    // const title = form.get("boardTitle")
-
+    const form = new FormData(event.currentTarget)
+    const title = form.get("boardTitle")
+    const user = await userLogged();
     
-    // const board = await fetch("http://localhost:4000/api/boards", {
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "body": JSON.stringify("")
-    //   },
-    //   method: "POST",
-    // })
+    const board = {
+      title: title, 
+      workspaceUUID: workspaceSelected,
+      userUUIDs: [user.uuid]
+    }
+
+    const result = await createBoard(board)
+    console.log('dd ', result)
+    if(result.error) {
+      setOpen(true)
+    }
   };
 
   const handleChangeWorkspace = (
@@ -66,11 +69,33 @@ const CreateCardBoard = () => {
   };
 
   return (
+    <>
+      <Box sx={{ width: '100%' }}>
+      <Collapse in={open}>
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+          sx={{ mb: 2 }}
+        >
+          Click the close icon to see the Collapse transition in action!
+        </Alert>
+      </Collapse>
+    </Box>
     <Button
-      className="py-10 max-h-[140px] bg-slate-800 dark:text-black text-bodydark1 dark:bg-white hover:bg-meta-4 dark:hover:bg-slate-200 rounded-xl"
+      className="py-8 bg-slate-800 dark:text-black text-bodydark1 dark:bg-white hover:bg-meta-4 dark:hover:bg-slate-200 rounded-xl"
       onClick={onOpen}
     >
-      <h4 className="font-bold text-large text-center">Create new board</h4>
+      <h4 className="font-bold text-md text-center">Create new board</h4>
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="center">
         <ModalContent>
@@ -79,31 +104,20 @@ const CreateCardBoard = () => {
               <ModalHeader className="flex flex-col gap-1">
                 Create board
               </ModalHeader>
+              <form action="" onSubmit={handleClick}>
               <ModalBody>
                 <Input
                   autoFocus
-                  // endContent={
-                  //   <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                  // }
-                  label="Board title"
-                  variant="bordered"
-                  size="sm"
-                  id="boardTitle"
+                  endContent={
+                    <AssignmentIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                  }
+                  placeholder="Enter board title"
+                  name="boardTitle"
                 />
-                {/* <Input
-                  // endContent={
-                  //   <LockIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                  // }
-                  label="Workspace"
-                  placeholder="Enter your password"
-                  type="password"
-                  variant="bordered"
-                /> */}
                 <Select
-                  variant={"bordered"}
-                  placeholder="Workspace"
+                  variant="bordered"
+                  placeholder="Select Workspace"
                   size="md"
-                  id="workspaceId"
                   value={workspaceSelected}
                   onChange={handleChangeWorkspace}
                 >
@@ -118,15 +132,17 @@ const CreateCardBoard = () => {
                 <Button color="danger" variant="flat" onPress={onClose}>
                   Close
                 </Button>
-                <Button color="primary" onClick={handleClickCreateBoard}>
+                <Button type="submit" color="primary">
                   Create
                 </Button>
               </ModalFooter>
+              </form>
             </>
           )}
         </ModalContent>
       </Modal>
     </Button>
+    </>
   );
 };
 
