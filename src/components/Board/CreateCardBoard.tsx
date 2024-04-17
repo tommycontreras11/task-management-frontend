@@ -1,30 +1,33 @@
-import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  Input,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-  Button,
-  Select,
-  SelectItem,
-} from "@nextui-org/react";
-import { useRouter } from "next/navigation";
-import { createBoard, getAllWorkspace, userLogged } from "../../../lib";
+import { IResponse } from "@/interfaces/reponse.interface";
 import { IWorkspace } from "@/interfaces/workspace.interface";
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import { Collapse, Alert, IconButton, Box } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
+import { Alert, Box, Collapse, IconButton } from "@mui/material";
+import {
+  Button,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Select,
+  SelectItem,
+  useDisclosure,
+} from "@nextui-org/react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { createBoard, getAllWorkspace, userLogged } from "../../../lib";
 
 const CreateCardBoard = () => {
-  const router = useRouter();
   const [workspaceSelected, setWorkspaceSelected] = useState<string>("");
   const [workspaces, setWorkspaces] = useState<IWorkspace[]>([]);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [open, setOpen] = useState(true);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState<IResponse>({
+    message: "",
+    error: false
+  });
 
   useEffect(() => {
     async function meWorkspaces() {
@@ -56,9 +59,12 @@ const CreateCardBoard = () => {
     }
 
     const result = await createBoard(board)
-    console.log('dd ', result)
     if(result.error) {
       setOpen(true)
+      setMessage({
+        message: result.message,
+        error: result.error
+      })
     }
   };
 
@@ -70,9 +76,10 @@ const CreateCardBoard = () => {
 
   return (
     <>
-      <Box sx={{ width: '100%' }}>
+      <Box sx={{ width: '400px' }}>
       <Collapse in={open}>
         <Alert
+        severity={message.error ? "error" : "success"}
           action={
             <IconButton
               aria-label="close"
@@ -87,7 +94,7 @@ const CreateCardBoard = () => {
           }
           sx={{ mb: 2 }}
         >
-          Click the close icon to see the Collapse transition in action!
+          {message.message}
         </Alert>
       </Collapse>
     </Box>

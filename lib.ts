@@ -49,7 +49,7 @@ export async function getAllWorkspace(): Promise<IWorkspace[]> {
   });
 
   const data = await response.json();
-
+  
   return data;
 }
 
@@ -87,6 +87,10 @@ export async function createBoard({ title, workspaceUUID, userUUIDs }: ICreateBo
     message: data.message || data.error.message,
     error: data.error ? true : false
   }
+}
+
+export async function getTasks() {
+  
 }
 
 export async function logOut() {
