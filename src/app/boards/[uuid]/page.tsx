@@ -1,10 +1,7 @@
 "use client";
 
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import CardTask from "@/components/Task/CardTask";
-import CreateTask from "@/components/Task/CreateTask";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import { Accordion, AccordionItem, Button, Input } from "@nextui-org/react";
+import DropdownList from "@/components/List/DropdownList";
 import { useEffect } from "react";
 
 export default function Page({ params }: { params: { uuid: string } }) {
@@ -16,8 +13,7 @@ export default function Page({ params }: { params: { uuid: string } }) {
 
   return (
     <DefaultLayout>
-      <CreateTask />
-      <CardTask />
+      <DropdownList uuid="22" boardUUID="sadas" title="fdsfsdf" />
     </DefaultLayout>
   );
 };
