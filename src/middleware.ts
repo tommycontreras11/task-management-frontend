@@ -15,6 +15,7 @@ export const config = {
     matcher: [
         '/',
         '/dashboard/:path*',
-        '/workspaces/:path*'
+        '/workspaces/:path*',
+        '/boards/:path*'
     ],
 }

@@ -13,7 +13,7 @@ export default function Page({ params }: { params: { uuid: string } }) {
 
   return (
     <DefaultLayout>
-      <DropdownList uuid="22" boardUUID="sadas" title="fdsfsdf" />
+      <DropdownList uuid="22" boardUUID="83f4f397-6da3-4a58-b393-717f4e9dff7d" title="fdsfsdf" />
     </DefaultLayout>
   );
 };

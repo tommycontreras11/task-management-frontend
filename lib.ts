@@ -103,6 +103,8 @@ export async function createList({ title, boardUUID }: ICreateList): Promise<IRe
   })
 
   const data = await response.json()
+
+  console.log(data)
   
   return {
     message: data.message || data.error.message,
@@ -110,8 +112,8 @@ export async function createList({ title, boardUUID }: ICreateList): Promise<IRe
   }
 }
 
-export async function getAllList(): Promise<IResponse> {
-  const response = await fetch("http://localhost:4000/api/lists", {
+export async function getAllListByBoard(uuid: string): Promise<IResponse> {
+  const response = await fetch(`http://localhost:4000/api/boards/${uuid}/lists`, {
     method: "GET",  
     headers: {
       "Content-Type": "application/json",
