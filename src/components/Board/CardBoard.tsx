@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  Input,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-  Button,
-  Select,
-  SelectItem,
-  Link,
-} from "@nextui-org/react";
-import { useRouter } from "next/navigation";
-import { createBoard, getAllWorkspace, userLogged } from "../../../lib";
+import { IResponse } from "@/interfaces/reponse.interface";
 import { IWorkspace } from "@/interfaces/workspace.interface";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import { Collapse, Alert, IconButton, Box, Fade } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { IResponse } from "@/interfaces/reponse.interface";
+import {
+  Button,
+  Input,
+  Link,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Select,
+  SelectItem,
+  useDisclosure,
+} from "@nextui-org/react";
+import React, { useEffect, useState } from "react";
+import { createBoard, getAllWorkspace, userLogged } from "../../../lib";
 import CustomizedSnackbars from "../Snackbar/Snackbar";
 
 interface CardBoardProps {
