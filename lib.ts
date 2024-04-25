@@ -1,7 +1,8 @@
 "use server";
 
-import { ICreateBoard } from "@/app/boards/interfaces/board.interface";
-import { ICreateList } from "@/app/lists/interface/list.interface";
+import { IBoard, ICreateBoard } from "@/app/boards/interfaces/board.interface";
+import { ICreateList, IList } from "@/app/lists/interface/list.interface";
+import { ICreateTask } from "@/app/tasks/interfaces/task.interface";
 import { IResponse } from "@/interfaces/reponse.interface";
 import { IUser, IWorkspace } from "@/interfaces/workspace.interface";
 import { jwtVerify } from "jose";
@@ -103,25 +104,6 @@ export async function createList({ title, boardUUID }: ICreateList): Promise<IRe
   })
 
   const data = await response.json()
-
-  console.log(data)
-  
-  return {
-    message: data.message || data.error.message,
-    error: data.error ? true : false
-  }
-}
-
-export async function getAllListByBoard(uuid: string): Promise<IResponse> {
-  const response = await fetch(`http://localhost:4000/api/boards/${uuid}/lists`, {
-    method: "GET",  
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: (await getSession()) as string
-    },
-  })
-
-  const data = await response.json()
   
   return {
     message: data.message || data.error.message,
@@ -146,6 +128,57 @@ export async function getOneList(uuid: string): Promise<IResponse> {
   }
 }
 
+export async function getTaskByList(uuid: string): Promise<IList> {
+  const response = await fetch(`http://localhost:4000/api/lists/${uuid}/tasks`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: (await getSession()) as string
+    },
+  })
+
+  const data = await response.json()
+
+  return data
+}
+
+export async function getListByBoard(uuid: string): Promise<IBoard> {
+  const response = await fetch(`http://localhost:4000/api/boards/${uuid}/lists`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: (await getSession()) as string
+    },
+  })
+
+  const data = await response.json()
+
+  return data
+}
+
+export async function createTask({ listUUID, title, description, dueDate, priority } : ICreateTask): Promise<IResponse> {
+  const response = await fetch("http://localhost:4000/api/tasks", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: (await getSession()) as string
+    },
+    body: JSON.stringify({
+      listUUID,
+      title,
+      description,
+      dueDate,
+      priority
+    })
+  })
+
+  const data = await response.json()
+
+  return {
+    message: data.message || data.error.message,
+    error: data.error ? true : false
+  }
+}
 
 export async function logOut() {
   cookies().set("access_token", "", { expires: new Date(0) });

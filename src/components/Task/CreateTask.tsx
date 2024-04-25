@@ -1,31 +1,45 @@
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import { Accordion, AccordionItem, Button, Input, useDisclosure } from "@nextui-org/react";
+import CloseIcon from "@mui/icons-material/Close";
+import { Button, Card, CardFooter, CardHeader, Input } from "@nextui-org/react";
 
-export default function CreateTask() {
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
-
-  return (
-    <div className="max-w-[300px]">
-        <Accordion variant="shadow">
-          <AccordionItem
-            key="1"
-            aria-label="Create a new task"
-            title="Create a new task"
-          >
-            <Input
-              autoFocus
-              endContent={
-                <AssignmentIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-              }
-              placeholder="Enter the title"
-              variant="bordered"
-              className="pb-2"
-            />
-            <Button color="primary" size="sm">
-              Create
-            </Button>
-          </AccordionItem>
-        </Accordion>
-      </div>
-  );
+interface ICreateList {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+export const CreateTask = ({ open, setOpen }: ICreateList) => {
+  return (
+    <>
+      {open && (
+        <Card className="max-w-[300px]">
+          <CardHeader className="flex justify-between">
+            <Input
+              placeholder="Enter task title"
+              name="taskTitle"
+              required
+              isRequired
+              isClearable
+            />
+          </CardHeader>
+
+          <CardFooter className="flex flex-row gap-3">
+            <Button
+              type="submit"
+              className="
+                rounded-xl py-3 px-6 font-medium duration-300 ease-in-out text-gray-900 bg-slate-800 dark:text-black text-bodydark1 dark:bg-white hover:bg-meta-4 dark:hover:bg-slate-200"
+            >
+              Add task
+            </Button>
+            <Button
+              onClick={() => setOpen(!open)}
+              className="rounded-xl py-3 px-4 font-medium  duration-300 ease-in-out text-gray-900 bg-slate-800 dark:text-black text-bodydark1 dark:bg-white hover:bg-meta-4 dark:hover:bg-slate-200"
+            >
+              <CloseIcon />
+            </Button>
+          </CardFooter>
+        </Card>
+      )}
+    </>
+  );
+};
+
+export default CreateTask;

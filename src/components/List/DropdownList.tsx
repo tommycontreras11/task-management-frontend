@@ -2,7 +2,7 @@ import { IList } from "@/app/lists/interface/list.interface";
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@nextui-org/react";
 import { FormEvent, useEffect, useState } from "react";
-import { createList } from "../../../lib";
+import { createList, createTask, getTaskByList } from "../../../lib";
 import { AlertPopup } from "../Alert/Alert";
 import CreateList from "./CreateList";
 import GetAllList from "./GetAllList";
@@ -14,10 +14,19 @@ export const DropdownList = ({ uuid, title, boardUUID }: IList) => {
     error: false,
     message: "",
   });
+  const [list, setList] = useState<IList>()
+  
+  useEffect(() => {
+    async function getAllTasks() {
+      const tasks = await getTaskByList(uuid)
 
-  useEffect(() => {}, []);
+      setList(tasks)
+    }
 
-  const handleClick = async (event: FormEvent<HTMLFormElement>) => {
+    getAllTasks()
+  }, []);
+
+  const handleClickList = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
@@ -25,16 +34,38 @@ export const DropdownList = ({ uuid, title, boardUUID }: IList) => {
 
     const response = await createList({ title: listTitle, boardUUID });
 
-    if (response.error) {
-      setOpenAlert(true);
-      setMessage({
-        message: response.message,
-        error: response.error,
-      });
-    }
-    setTimeout(() => {
-      setOpenAlert(false);
-    }, 5000);
+      if (response.error) {
+        setOpenAlert(true);
+        setMessage({
+          message: response.message,
+          error: response.error,
+        });
+      }
+      setTimeout(() => {
+        setOpenAlert(false);
+      }, 5000);
+  };
+
+  const handleClickTask = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const taskTitle = formData.get("taskTitle") as string;
+
+    console.log(taskTitle)
+
+    const response = await createTask({ listUUID: uuid, title: taskTitle });
+
+      if (response.error) {
+        setOpenAlert(true);
+        setMessage({
+          message: response.message,
+          error: response.error,
+        });
+      }
+      setTimeout(() => {
+        setOpenAlert(false);
+      }, 5000);
   };
 
   return (
@@ -45,11 +76,11 @@ export const DropdownList = ({ uuid, title, boardUUID }: IList) => {
         setOpenAlert={setOpenAlert}
       />
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 sm:grid-cols-2 xsm:grid-cols-2 xl:grid-cols-4 2xl:gap-7.5">
-        <form onSubmit={handleClick}>
-          <GetAllList />
+        <form onSubmit={handleClickTask}>
+    	  {list && <GetAllList boardUUID={boardUUID} tasks={list.tasks} />} 
         </form>
         {open ? (
-          <form onSubmit={handleClick}>
+          <form onSubmit={handleClickList}>
             <CreateList setOpen={setOpen} open={open} />
           </form>
         ) : (

@@ -13,8 +13,8 @@ export const CreateList = ({ open, setOpen }: ICreateList) => {
         <Card className="max-w-[300px]">
           <CardHeader className="flex justify-between">
             <Input
-              placeholder="Enter list title"
-              name="listTitle"
+              placeholder="Enter task title"
+              name="taskTitle"
               required
               isRequired
               isClearable
@@ -27,7 +27,7 @@ export const CreateList = ({ open, setOpen }: ICreateList) => {
               className="
                 rounded-xl py-3 px-6 font-medium duration-300 ease-in-out text-gray-900 bg-slate-800 dark:text-black text-bodydark1 dark:bg-white hover:bg-meta-4 dark:hover:bg-slate-200"
             >
-              Add list
+              Add task
             </Button>
             <Button
               onClick={() => setOpen(!open)}
